@@ -1,0 +1,191 @@
+<UserControl x:Class="HomeForge.App.Views.ToolsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="SubTabButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="18,12" />
+            <Setter Property="Margin" Value="0,0,12,12" />
+            <Setter Property="MinWidth" Value="150" />
+            <Setter Property="MinHeight" Value="46" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="12"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsChecked" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Root" Property="Background" Value="#162235" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#31435F" />
+                                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="230" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <WrapPanel Grid.Row="0" Margin="0,0,14,14" VerticalAlignment="Top">
+                <RadioButton x:Name="QuickToolsTab" Content="Essentials" GroupName="ServerToolsTabs" Style="{StaticResource SubTabButton}" IsChecked="True" Checked="SubTab_Checked" />
+                <RadioButton x:Name="PcServerSetupTab" Content="Server Setup" GroupName="ServerToolsTabs" Style="{StaticResource SubTabButton}" Checked="SubTab_Checked" />
+                <RadioButton x:Name="InstallersTab" Content="Installers" GroupName="ServerToolsTabs" Style="{StaticResource SubTabButton}" Checked="SubTab_Checked" />
+            </WrapPanel>
+
+            <Grid Grid.Row="1">
+                <ScrollViewer x:Name="QuickToolsPanel" VerticalScrollBarVisibility="Auto" Visibility="Visible">
+                    <StackPanel Margin="0,0,0,0">
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="Essential actions" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                <TextBlock Text="Common actions for preparing and opening the server workspace." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                <WrapPanel>
+                                    <Button Content="Prepare folders" Style="{StaticResource PrimaryButton}" Margin="0,0,10,10" Click="CreateFolders_Click" />
+                                    <Button Content="Open C:\HomeServer" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="OpenRoot_Click" />
+                                    <Button Content="Admin PowerShell" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="OpenAdminShell_Click" />
+                                    <Button Content="Advanced script tools" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="OpenLegacyWizard_Click" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="PcServerSetupPanel" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <StackPanel Margin="0,0,0,0">
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="Server preparation" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+                                <TextBlock Text="Run these actions to prepare Windows for reliable 24/7 hosting. Administrator access is recommended." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,18" />
+                                <Button Content="Run recommended setup" Style="{StaticResource PrimaryButton}" Width="260" HorizontalAlignment="Left" Click="RecommendedSetup_Click" />
+                            </StackPanel>
+                        </Border>
+
+                        <UniformGrid Columns="2">
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock Text="System foundation" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                    <TextBlock Text="Create the server workspace and apply always-on reliability settings." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                    <WrapPanel>
+                                        <Button Content="Create folders" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="CreateFolders_Click" />
+                                        <Button Content="Always-on power" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="PowerSettings_Click" />
+                                        <Button Content="Improve reliability" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="DeepPower_Click" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock Text="Network protection" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                    <TextBlock Text="Apply safer firewall, network and maintenance-window settings." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                    <WrapPanel>
+                                        <Button Content="Enable firewall" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="FirewallBaseline_Click" />
+                                        <Button Content="Trust local network" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="NetworkPrivate_Click" />
+                                        <Button Content="Set maintenance window" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="UpdateHours_Click" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock Text="Maintenance" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                    <TextBlock Text="Create maintenance tools and schedule regular backup and health checks." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                    <WrapPanel>
+                                        <Button Content="Create maintenance tools" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="MaintenanceScripts_Click" />
+                                        <Button Content="Schedule maintenance" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="MaintenanceTasks_Click" />
+                                        <Button Content="Create dashboard" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="CreateDashboard_Click" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock Text="Application hosting" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                    <TextBlock Text="Prepare application templates, monitoring and the hosted apps folder." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                    <WrapPanel>
+                                        <Button Content="Create Docker templates" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="DockerTemplates_Click" />
+                                        <Button Content="Start Docker after login" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="DockerAutostart_Click" />
+                                        <Button Content="Start Docker apps now" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="StartDockerApps_Click" />
+                                        <Button Content="Deploy Uptime Kuma" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="DeployUptimeKuma_Click" />
+                                        <Button Content="Create app folder" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="DesktopDropZone_Click" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="Access and secrets" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                <TextBlock Text="Create setup instructions, allow a private LAN port or protect stored secrets." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                <WrapPanel VerticalAlignment="Center">
+                                    <Button Content="Network checklist" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="RouterChecklist_Click" />
+                                    <Button Content="Protect secrets" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="HardenSecrets_Click" />
+                                    <TextBlock Text="TCP port:" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Margin="10,0,8,10" />
+                                    <TextBox x:Name="PortBox" Text="5088" Width="90" Margin="0,0,10,10" />
+                                    <Button Content="Allow private port" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="OpenPort_Click" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="InstallersPanel" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <StackPanel Margin="0,0,0,0">
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="Install server tools" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                <TextBlock Text="Installs through winget. Some tools may request a restart." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                                <WrapPanel>
+                                    <Button Content="Install Git, 7-Zip and PowerShell 7" Style="{StaticResource PrimaryButton}" Margin="0,0,10,10" Click="InstallCommonTools_Click" />
+                                    <Button Content="Install Docker Desktop" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="InstallDocker_Click" />
+                                    <Button Content="Install Tailscale" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="InstallTailscale_Click" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,14,14,0">
+            <StackPanel>
+                <TextBlock Text="Action log" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                <TextBox x:Name="OutputBox" MinHeight="150" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" FontFamily="Consolas" Margin="0,12,0,0" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

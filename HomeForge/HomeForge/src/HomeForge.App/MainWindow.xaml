@@ -1,0 +1,54 @@
+<Window x:Class="HomeForge.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="HomeForge" Height="820" Width="1220" MinWidth="980" MinHeight="680"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource BgBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#090E16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,1,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="22,24,22,18">
+                    <TextBlock Text="HOMEFORGE" Foreground="{StaticResource AccentBrush}" FontSize="26" FontWeight="Bold" />
+                    <TextBlock Text="Server control centre" Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0" />
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Margin="20">
+                    <Border Background="#0E1520" CornerRadius="14" Padding="14" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="HomeForge Desktop" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" />
+                            <TextBlock Text="Administrator access is recommended for system changes." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,5,0,0" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel>
+                    <RadioButton x:Name="DashboardTab" Content="Dashboard" Style="{StaticResource NavButton}" IsChecked="True" Checked="Nav_Checked" Tag="Dashboard" />
+                    <RadioButton x:Name="ConnectionTab" Content="Connections" Style="{StaticResource NavButton}" Checked="Nav_Checked" Tag="Connections" />
+                    <RadioButton x:Name="AppsTab" Content="Apps" Style="{StaticResource NavButton}" Checked="Nav_Checked" Tag="DesktopApps" />
+                    <RadioButton x:Name="ToolsTab" Content="Setup" Style="{StaticResource NavButton}" Checked="Nav_Checked" Tag="Tools" />
+                    <RadioButton x:Name="BackupsTab" Content="Backups" Style="{StaticResource NavButton}" Checked="Nav_Checked" Tag="Backups" />
+                    <RadioButton x:Name="SecurityTab" Content="Security" Style="{StaticResource NavButton}" Checked="Nav_Checked" Tag="Security" />
+                    <RadioButton x:Name="LogsTab" Content="Logs" Style="{StaticResource NavButton}" Checked="Nav_Checked" Tag="Logs" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,22">
+                <StackPanel>
+                    <TextBlock x:Name="PageTitle" Text="Dashboard" Foreground="{StaticResource AccentBrush}" FontSize="30" FontWeight="Bold" />
+                    <TextBlock x:Name="PageSubtitle" Text="Server overview and readiness." Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0" />
+                </StackPanel>
+            </DockPanel>
+            <ContentControl x:Name="MainContent" Grid.Row="1" />
+        </Grid>
+    </Grid>
+</Window>

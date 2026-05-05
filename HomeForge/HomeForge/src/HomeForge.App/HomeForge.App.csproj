@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>HomeForge</AssemblyName>
+    <RootNamespace>HomeForge.App</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HomeForge.Models\HomeForge.Models.csproj" />
+    <ProjectReference Include="..\HomeForge.Core\HomeForge.Core.csproj" />
+    <ProjectReference Include="..\HomeForge.Services\HomeForge.Services.csproj" />
+  </ItemGroup>
+</Project>

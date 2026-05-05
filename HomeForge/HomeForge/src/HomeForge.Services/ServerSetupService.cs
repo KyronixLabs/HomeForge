@@ -217,15 +217,15 @@ Write-Host 'Windows Update active hours set to 06:00-02:00.'
     {
         var commands = new[]
         {
-            "install --id Git.Git -e --accept-package-agreements --accept-source-agreements",
-            "install --id 7zip.7zip -e --accept-package-agreements --accept-source-agreements",
-            "install --id Microsoft.PowerShell -e --accept-package-agreements --accept-source-agreements"
+            "install --id Git.Git -e --accept-package-agreements --accept-source-agreements --disable-interactivity",
+            "install --id 7zip.7zip -e --accept-package-agreements --accept-source-agreements --disable-interactivity",
+            "install --id Microsoft.PowerShell -e --accept-package-agreements --accept-source-agreements --disable-interactivity"
         };
-        return RunWingetCommands(commands, 900);
+        return RunWingetCommands(commands, 1800);
     }
 
-    public string InstallDockerDesktop() => RunWingetCommands(new[] { "install --id Docker.DockerDesktop -e --accept-package-agreements --accept-source-agreements" }, 900);
-    public string InstallTailscale() => RunWingetCommands(new[] { "install --id Tailscale.Tailscale -e --accept-package-agreements --accept-source-agreements" }, 600);
+    public string InstallDockerDesktop() => RunWingetCommands(new[] { "install --id Docker.DockerDesktop -e --accept-package-agreements --accept-source-agreements --disable-interactivity" }, 1800);
+    public string InstallTailscale() => RunWingetCommands(new[] { "install --id Tailscale.Tailscale -e --accept-package-agreements --accept-source-agreements --disable-interactivity" }, 1200);
 
     public string OpenTcpPort(int port)
     {

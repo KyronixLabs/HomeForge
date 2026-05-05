@@ -1,26 +1,89 @@
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using HomeForge.Core;
 using HomeForge.Services;
+using HomeForge.App;
 
 namespace HomeForge.App.Views;
 
 public partial class ToolsView : UserControl
 {
-    private readonly FolderSetupService _folderSetupService;
-    private readonly CommandService _commandService;
     private readonly ServerSetupService _serverSetupService;
+    private bool _isActionRunning;
 
     public ToolsView(FolderSetupService folderSetupService, CommandService commandService, ServerSetupService serverSetupService)
     {
         InitializeComponent();
-        _folderSetupService = folderSetupService;
-        _commandService = commandService;
         _serverSetupService = serverSetupService;
-        OutputBox.Text = "Select an action. System-level changes require administrator access.";
+
+        if (!SessionActionLog.HasEntries)
+        {
+            SessionActionLog.Append("Select an action. System-level changes require administrator access.");
+        }
+
+        RefreshOutput(scrollToEnd: false);
+        RefreshProgress();
     }
 
+    private void WriteOutput(string text)
+    {
+        SessionActionLog.Append(text);
+        RefreshOutput(scrollToEnd: true);
+    }
+
+    private void RefreshOutput(bool scrollToEnd)
+    {
+        OutputBox.Text = SessionActionLog.Text;
+
+        if (scrollToEnd)
+        {
+            OutputBox.CaretIndex = OutputBox.Text.Length;
+            OutputBox.ScrollToEnd();
+        }
+        else
+        {
+            OutputBox.CaretIndex = 0;
+            OutputBox.ScrollToHome();
+        }
+    }
+
+    private void RefreshProgress()
+    {
+        ProgressPanel.Visibility = SessionActionLog.IsProgressVisible ? Visibility.Visible : Visibility.Collapsed;
+        ActionProgressBar.IsIndeterminate = SessionActionLog.IsProgressIndeterminate;
+        ActionProgressBar.Value = SessionActionLog.ProgressValue;
+        ProgressText.Text = SessionActionLog.ProgressText;
+        ProgressPercentText.Text = SessionActionLog.IsProgressIndeterminate ? "Working" : $"{SessionActionLog.ProgressValue:0}%";
+    }
+
+    private void SetProgress(double value, string text)
+    {
+        SessionActionLog.UpdateProgress(value, text);
+        RefreshProgress();
+    }
+
+    private async Task RunProgressLoopAsync(string title, CancellationToken cancellationToken)
+    {
+        var value = 4d;
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            await Task.Delay(450, cancellationToken).ConfigureAwait(false);
+            value = Math.Min(value + GetProgressStep(value), 92);
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                SetProgress(value, $"{title} is still running...");
+            });
+        }
+    }
+
+    private static double GetProgressStep(double value)
+    {
+        if (value < 30) return 4;
+        if (value < 60) return 2.5;
+        if (value < 80) return 1.4;
+        return 0.6;
+    }
 
     private void SubTab_Checked(object sender, RoutedEventArgs e)
     {
@@ -34,55 +97,85 @@ public partial class ToolsView : UserControl
         InstallersPanel.Visibility = InstallersTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private void ShowOutput(string title, Func<string> action)
+    private async Task ShowOutputAsync(string title, Func<string> action)
     {
-        try
+        if (_isActionRunning)
         {
-            OutputBox.Text = $"> {title}\r\n\r\nWorking...";
-            OutputBox.Text = $"> {title}\r\n\r\n" + action();
-        }
-        catch (Exception ex)
-        {
-            OutputBox.Text = $"> {title}\r\n\r\nFAILED\r\n{ex.Message}";
-        }
-    }
-
-    private void CreateFolders_Click(object sender, RoutedEventArgs e) => ShowOutput("Create folder layout", _serverSetupService.CreateFolderLayout);
-    private void RecommendedSetup_Click(object sender, RoutedEventArgs e) => ShowOutput("Run recommended server setup", _serverSetupService.RunRecommendedSetup);
-    private void PowerSettings_Click(object sender, RoutedEventArgs e) => ShowOutput("Configure 24/7 power settings", _serverSetupService.ConfigureAlwaysOnPower);
-    private void DeepPower_Click(object sender, RoutedEventArgs e) => ShowOutput("Improve power reliability", _serverSetupService.ConfigureDeepPowerOptimization);
-    private void FirewallBaseline_Click(object sender, RoutedEventArgs e) => ShowOutput("Enable Windows Firewall baseline", _serverSetupService.ConfigureFirewallBaseline);
-    private void NetworkPrivate_Click(object sender, RoutedEventArgs e) => ShowOutput("Set network profile to Private", _serverSetupService.ConfigureNetworkPrivate);
-    private void UpdateHours_Click(object sender, RoutedEventArgs e) => ShowOutput("Set Windows Update active hours", _serverSetupService.ConfigureWindowsUpdateActiveHours);
-    private void MaintenanceScripts_Click(object sender, RoutedEventArgs e) => ShowOutput("Create maintenance scripts", _serverSetupService.CreateMaintenanceScripts);
-    private void MaintenanceTasks_Click(object sender, RoutedEventArgs e) => ShowOutput("Register maintenance tasks", _serverSetupService.RegisterMaintenanceTasks);
-    private void CreateDashboard_Click(object sender, RoutedEventArgs e) => ShowOutput("Create dashboard files", _serverSetupService.CreateDashboardFiles);
-    private void DockerTemplates_Click(object sender, RoutedEventArgs e) => ShowOutput("Create Docker templates", _serverSetupService.CreateDockerTemplates);
-    private void DockerAutostart_Click(object sender, RoutedEventArgs e) => ShowOutput("Start Docker apps after login", _serverSetupService.RegisterDockerAutostartTask);
-    private void StartDockerApps_Click(object sender, RoutedEventArgs e) => ShowOutput("Start Docker apps now", _serverSetupService.StartAllDockerAppsNow);
-    private void DeployUptimeKuma_Click(object sender, RoutedEventArgs e) => ShowOutput("Deploy Uptime Kuma", _serverSetupService.DeployUptimeKuma);
-    private void DesktopDropZone_Click(object sender, RoutedEventArgs e) => ShowOutput("Create hosted apps folder", _serverSetupService.CreateDesktopAppsDropZone);
-    private void RouterChecklist_Click(object sender, RoutedEventArgs e) => ShowOutput("Create router/BIOS checklist", _serverSetupService.CreateRouterBiosChecklist);
-    private void HardenSecrets_Click(object sender, RoutedEventArgs e) => ShowOutput("Harden secrets folders", _serverSetupService.HardenSecretsFolders);
-    private void InstallCommonTools_Click(object sender, RoutedEventArgs e) => ShowOutput("Install common tools", _serverSetupService.InstallCommonTools);
-    private void InstallTailscale_Click(object sender, RoutedEventArgs e) => ShowOutput("Install Tailscale", _serverSetupService.InstallTailscale);
-    private void InstallDocker_Click(object sender, RoutedEventArgs e) => ShowOutput("Install Docker Desktop", _serverSetupService.InstallDockerDesktop);
-    private void OpenAdminShell_Click(object sender, RoutedEventArgs e) => ShowOutput("Open Administrator PowerShell", _serverSetupService.OpenAdminPowerShell);
-    private void OpenLegacyWizard_Click(object sender, RoutedEventArgs e) => ShowOutput("Open advanced script tools", _serverSetupService.OpenLegacyPowerShellWizard);
-
-    private void OpenRoot_Click(object sender, RoutedEventArgs e)
-    {
-        ShowOutput("Open C:\\HomeServer", () => _serverSetupService.OpenFolder(HomeForgePaths.RootPath));
-    }
-
-    private void OpenPort_Click(object sender, RoutedEventArgs e)
-    {
-        if (!int.TryParse(PortBox.Text, out var port))
-        {
-            OutputBox.Text = "Enter a valid TCP port number first.";
+            WriteOutput("Another action is already running. Wait for it to finish before starting a new one.");
             return;
         }
 
-        ShowOutput($"Open private firewall port {port}", () => _serverSetupService.OpenTcpPort(port));
+        using var progressCancellation = new CancellationTokenSource();
+        Task? progressTask = null;
+
+        try
+        {
+            _isActionRunning = true;
+            SessionActionLog.StartProgress($"Starting {title}...");
+            RefreshProgress();
+            WriteOutput($"> {title}\r\n\r\nWorking...\r\n\r\nThis is running in the background. HomeForge will stay responsive while the action completes.");
+
+            progressTask = RunProgressLoopAsync(title, progressCancellation.Token);
+            var result = await Task.Run(action);
+
+            progressCancellation.Cancel();
+            try
+            {
+                if (progressTask is not null) await progressTask;
+            }
+            catch (OperationCanceledException)
+            {
+            }
+
+            SessionActionLog.CompleteProgress($"{title} complete.");
+            RefreshProgress();
+            WriteOutput($"> {title}\r\n\r\n{result}");
+        }
+        catch (Exception ex)
+        {
+            progressCancellation.Cancel();
+            SessionActionLog.CompleteProgress($"{title} failed.");
+            RefreshProgress();
+            WriteOutput($"> {title}\r\n\r\nFAILED\r\n{ex.Message}");
+        }
+        finally
+        {
+            _isActionRunning = false;
+        }
+    }
+
+    private async void CreateFolders_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Create folder layout", _serverSetupService.CreateFolderLayout);
+    private async void RecommendedSetup_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Run recommended server setup", _serverSetupService.RunRecommendedSetup);
+    private async void PowerSettings_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Configure 24/7 power settings", _serverSetupService.ConfigureAlwaysOnPower);
+    private async void DeepPower_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Improve power reliability", _serverSetupService.ConfigureDeepPowerOptimization);
+    private async void FirewallBaseline_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Enable Windows Firewall baseline", _serverSetupService.ConfigureFirewallBaseline);
+    private async void NetworkPrivate_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Set network profile to Private", _serverSetupService.ConfigureNetworkPrivate);
+    private async void UpdateHours_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Set Windows Update active hours", _serverSetupService.ConfigureWindowsUpdateActiveHours);
+    private async void MaintenanceScripts_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Create maintenance scripts", _serverSetupService.CreateMaintenanceScripts);
+    private async void MaintenanceTasks_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Register maintenance tasks", _serverSetupService.RegisterMaintenanceTasks);
+    private async void CreateDashboard_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Create dashboard files", _serverSetupService.CreateDashboardFiles);
+    private async void DockerTemplates_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Create Docker templates", _serverSetupService.CreateDockerTemplates);
+    private async void DockerAutostart_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Start Docker apps after login", _serverSetupService.RegisterDockerAutostartTask);
+    private async void StartDockerApps_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Start Docker apps now", _serverSetupService.StartAllDockerAppsNow);
+    private async void DeployUptimeKuma_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Deploy Uptime Kuma", _serverSetupService.DeployUptimeKuma);
+    private async void DesktopDropZone_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Create hosted apps folder", _serverSetupService.CreateDesktopAppsDropZone);
+    private async void RouterChecklist_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Create router/BIOS checklist", _serverSetupService.CreateRouterBiosChecklist);
+    private async void HardenSecrets_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Harden secrets folders", _serverSetupService.HardenSecretsFolders);
+    private async void InstallCommonTools_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Install common tools", _serverSetupService.InstallCommonTools);
+    private async void InstallTailscale_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Install Tailscale", _serverSetupService.InstallTailscale);
+    private async void InstallDocker_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Install Docker Desktop", _serverSetupService.InstallDockerDesktop);
+    private async void OpenAdminShell_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Open Administrator PowerShell", _serverSetupService.OpenAdminPowerShell);
+    private async void OpenLegacyWizard_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Open advanced script tools", _serverSetupService.OpenLegacyPowerShellWizard);
+    private async void OpenRoot_Click(object sender, RoutedEventArgs e) => await ShowOutputAsync("Open C:\\HomeServer", () => _serverSetupService.OpenFolder(HomeForgePaths.RootPath));
+
+    private async void OpenPort_Click(object sender, RoutedEventArgs e)
+    {
+        if (!int.TryParse(PortBox.Text, out var port))
+        {
+            WriteOutput("Enter a valid TCP port number first.");
+            return;
+        }
+
+        await ShowOutputAsync($"Open private firewall port {port}", () => _serverSetupService.OpenTcpPort(port));
     }
 }

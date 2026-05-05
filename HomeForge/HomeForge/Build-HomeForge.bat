@@ -35,10 +35,16 @@ dotnet build HomeForge.sln -c Release --no-restore
 if errorlevel 1 goto :fail
 
 echo.
-echo [4/4] Publishing HomeForge.App...
+echo [4/5] Publishing HomeForge.App...
 if not exist publish mkdir publish
 dotnet publish src\HomeForge.App\HomeForge.App.csproj -c Release -r win-x64 --self-contained false -o publish\win-x64
 if errorlevel 1 goto :fail
+
+echo.
+echo [5/5] Applying app and desktop shortcut icon...
+if exist "src\HomeForge.App\Assets\HomeForge.ico" copy /Y "src\HomeForge.App\Assets\HomeForge.ico" "publish\win-x64\HomeForge.ico" >nul
+if exist "src\HomeForge.App\Assets\HomeForgeIcon.png" copy /Y "src\HomeForge.App\Assets\HomeForgeIcon.png" "publish\win-x64\HomeForgeIcon.png" >nul
+if exist "Create-Desktop-Shortcut.ps1" powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%CD%\Create-Desktop-Shortcut.ps1"
 
 echo.
 echo ============================================================

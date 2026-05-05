@@ -1,0 +1,25 @@
+<UserControl x:Class="HomeForge.App.Views.BackupsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer>
+        <StackPanel>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Backups" FontSize="20" FontWeight="SemiBold"  Foreground="{StaticResource AccentBrush}" />
+                    <TextBlock Text="Prepare backup and recovery locations for hosted apps, configuration files and secrets." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+                    <WrapPanel>
+                        <Button Content="Create folders" Style="{StaticResource PrimaryButton}" Margin="0,0,10,10" Click="CreateFolders_Click" />
+                        <Button Content="Open backups" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="OpenBackups_Click" />
+                        <Button Content="Open restore" Style="{StaticResource SecondaryButton}" Margin="0,0,10,10" Click="OpenRestore_Click" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Backup strategy" FontSize="20" FontWeight="SemiBold"  Foreground="{StaticResource AccentBrush}" />
+                    <TextBlock Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,10,0,0" Text="Back up app data, configs, scripts and secrets. Keep at least one copy outside this server, such as an external drive, NAS or cloud folder. Never rely only on C:\HomeServer\backups." />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

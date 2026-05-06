@@ -1,0 +1,63 @@
+<UserControl x:Class="HomeForge.App.Views.AppConnectionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="420" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Connection profile" FontSize="20" FontWeight="SemiBold"  Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Create a dedicated folder containing server URLs, endpoint references and connection tests." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,16" />
+
+                        <TextBlock Text="App name" Foreground="{StaticResource MutedTextBrush}" />
+                        <TextBox x:Name="AppNameBox" Text="My App" Margin="0,6,0,14" />
+
+                        <TextBlock Text="Local API port" Foreground="{StaticResource MutedTextBrush}" />
+                        <TextBox x:Name="LocalPortBox" Text="5088" Margin="0,6,0,14" />
+
+                        <TextBlock Text="Public access method" Foreground="{StaticResource MutedTextBrush}" />
+                        <ComboBox x:Name="MethodBox" Margin="0,6,0,14" SelectedIndex="1">
+                            <ComboBoxItem Content="Local testing only" Tag="LocalOnly" />
+                            <ComboBoxItem Content="Tailscale Funnel HTTPS" Tag="TailscaleFunnel" />
+                            <ComboBoxItem Content="Existing domain or DDNS" Tag="ExistingDomainOrDdns" />
+                            <ComboBoxItem Content="DuckDNS setup pack" Tag="DuckDnsPack" />
+                        </ComboBox>
+
+                        <TextBlock Text="Public host or URL" Foreground="{StaticResource MutedTextBrush}" />
+                        <TextBox x:Name="PublicHostBox" Text="YOUR-DEVICE.YOUR-TAILNET.ts.net" Margin="0,6,0,14" />
+
+                        <TextBlock Text="Endpoints, one per line" Foreground="{StaticResource MutedTextBrush}" />
+                        <TextBox x:Name="EndpointsBox" MinHeight="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,6,0,16" Text="/api/health&#x0a;/api/auth/login&#x0a;/api/version&#x0a;/api/bots&#x0a;/api/kraken" />
+
+                        <Button Content="Create connection profile" Style="{StaticResource PrimaryButton}" Click="Generate_Click" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Column="1" Style="{StaticResource Card}" Margin="0,0,0,14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Connection details" FontSize="20" FontWeight="SemiBold"  Foreground="{StaticResource AccentBrush}" />
+                    <TextBlock Text="Copy the server URL into your app or open the folder for all connection files." Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,14" />
+                </StackPanel>
+                <TextBox x:Name="ResultBox" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="13" />
+                <WrapPanel Grid.Row="2" Margin="0,16,0,0">
+                    <Button Content="Copy Server URL" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Click="CopyServerUrl_Click" />
+                    <Button Content="Copy details" Style="{StaticResource SecondaryButton}" Margin="0,0,10,0" Click="CopyAll_Click" />
+                    <Button Content="Open generated folder" Style="{StaticResource SecondaryButton}" Click="OpenFolder_Click" />
+                </WrapPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

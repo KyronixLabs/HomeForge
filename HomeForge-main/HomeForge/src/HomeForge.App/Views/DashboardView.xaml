@@ -1,0 +1,94 @@
+<UserControl x:Class="HomeForge.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Border Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Server readiness" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Prepare the machine, connect an app and confirm the core services are ready." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,0" />
+                    </StackPanel>
+                    <WrapPanel Grid.Column="1" VerticalAlignment="Center" Margin="18,0,0,0">
+                        <Button Content="Refresh" Style="{StaticResource SecondaryButton}" Margin="0,0,10,0" Click="Refresh_Click" />
+                        <Button Content="Prepare folders" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Click="CreateFolders_Click" />
+                        <Button Content="Open server folder" Style="{StaticResource SecondaryButton}" Click="OpenRoot_Click" />
+                    </WrapPanel>
+                </Grid>
+            </Border>
+
+            <UniformGrid Columns="3" Margin="0,0,0,8">
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Server" Foreground="{StaticResource MutedTextBrush}" />
+                        <TextBlock x:Name="ServerNameText" FontSize="22" FontWeight="Bold" Margin="0,8,0,0" Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis" />
+                        <Border x:Name="AdminBadge" CornerRadius="9" Padding="9,5" Margin="0,12,0,0" HorizontalAlignment="Left" Background="#162235" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1">
+                            <TextBlock x:Name="AdminText" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" />
+                        </Border>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Network" Foreground="{StaticResource MutedTextBrush}" />
+                        <TextBlock x:Name="IpText" FontSize="22" FontWeight="Bold" Margin="0,8,0,0" Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="Local access address" Foreground="{StaticResource MutedTextBrush}" Margin="0,6,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Tools" Foreground="{StaticResource MutedTextBrush}" />
+                        <WrapPanel Margin="0,12,0,0">
+                            <Border x:Name="DockerBadge" CornerRadius="9" Padding="9,5" Margin="0,0,8,8" Background="#162235" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1">
+                                <TextBlock x:Name="DockerBadgeText" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" />
+                            </Border>
+                            <Border x:Name="TailscaleBadge" CornerRadius="9" Padding="9,5" Margin="0,0,8,8" Background="#162235" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1">
+                                <TextBlock x:Name="TailscaleBadgeText" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" />
+                            </Border>
+                        </WrapPanel>
+                        <TextBlock Text="Installed tool detection" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <UniformGrid Columns="2" Margin="0,0,0,8">
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Setup progress" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Server folder" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,10" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="RootStatusText" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" Margin="20,0,0,10" />
+                            <TextBlock Grid.Row="1" Text="Application folders" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,10" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="AppFoldersText" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" Margin="20,0,0,10" />
+                            <TextBlock Grid.Row="2" Text="Approved applications" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,10" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="ApprovedAppsText" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" Margin="20,0,0,10" />
+                            <TextBlock Grid.Row="3" Text="Last checked" Foreground="{StaticResource MutedTextBrush}" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LastUpdatedText" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" Margin="20,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Recommended next step" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock x:Name="NextStepText" Foreground="{StaticResource TextBrush}" TextWrapping="Wrap" Margin="0,14,0,0" />
+                        <TextBlock Text="Use the Setup page for full server preparation, then create a connection profile for your app." Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,10,0,0" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
